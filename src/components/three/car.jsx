@@ -10,9 +10,22 @@ Title: (FREE) Porsche 911 Carrera 4S
 import React, { useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import { angleToRadians } from "../../utils/angle";
+import { useFrame } from "@react-three/fiber";
 
 export function Car(props) {
+  const frontWheelRef = useRef();
+  const backWheelRef = useRef();
   const { nodes, materials } = useGLTF("/models/car/model.glb");
+
+  useFrame((state) => {
+    const { clock } = state;
+    const { current: wheels } = backWheelRef;
+    // spin the wheels
+
+    if (!!wheels) {
+      wheels.rotation.x = clock.getElapsedTime() * 3;
+    }
+  });
   return (
     <group
       {...props}
@@ -34,7 +47,7 @@ export function Car(props) {
             material={materials.plastic}
           />
         </group>
-        <group position={[0, 0, 0.029]}>
+        <group position={[0, 0, 0.029]} ref={backWheelRef}>
           <mesh
             geometry={nodes.Cylinder000_0.geometry}
             material={materials.silver}
@@ -52,7 +65,7 @@ export function Car(props) {
             material={materials["Material.001"]}
           />
         </group>
-        <group position={[0, 0, 0.029]}>
+        <group position={[0, 0, 0.029]} ref={frontWheelRef}>
           <mesh
             geometry={nodes.Cylinder001_0.geometry}
             material={materials.silver}
